@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSD-379 Space Experiment Simulation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        #game-container {
+            width: 1000px;
+            height: 600px;
+            margin: 20px auto;
+            position: relative;
+            background-image: url('/api/placeholder/1000/600');
+            background-size: cover;
+            border: 2px solid #444;
+            overflow: hidden;
+        }
+        #iss-interior {
+            width: 100%;
+            height: 100%;
+            background-image: url('/api/placeholder/1000/600');
+            background-size: cover;
+        }
+        #experiment-area {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            background-color: rgba(255,255,255,0.1);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+        }
+        .rat {
+            width: 30px;
+            height: 20px;
+            background-image: url('/api/placeholder/30/20');
+            background-size: cover;
+            position: absolute;
+        }
+        #control-panel {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 200px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #info-panel {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #data-display {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 200px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="iss-interior">
+            <div id="experiment-area"></div>
+        </div>
+        <div id="control-panel">
+            <button id="feed-btn">Feed Rats</button>
+            <button id="observe-btn">Observe Behavior</button>
+            <button id="collect-sample-btn">Collect Liver Sample</button>
+            <button id="analyze-btn">Analyze Data</button>
+        </div>
+        <div id="data-display">
+            <h3>Experiment Data</h3>
+            <p>Days in space: <span id="days-counter">0</span></p>
+            <p>Rat health: <span id="rat-health">100%</span></p>
+            <p>Samples collected: <span id="samples-collected">0</span></p>
+        </div>
+        <div id="info-panel">Welcome to the OSD-379 Space Experiment Simulation. Start by feeding the rats.</div>
+    </div>
+
+    <script>
+        const experimentArea = document.getElementById('experiment-area');
+        const infoPanel = document.getElementById('info-panel');
+        const daysCounter = document.getElementById('days-counter');
+        const ratHealth = document.getElementById('rat-health');
+        const samplesCollected = document.getElementById('samples-collected');
+
+        let days = 0;
+        let health = 100;
+        let samples = 0;
+
+        // Create rats
+        for (let i = 0; i < 3; i++) {
+            const rat = document.createElement('div');
+            rat.className = 'rat';
+            rat.style.left = `${Math.random() * 270}px`;
+            rat.style.top = `${Math.random() * 170}px`;
+            experimentArea.appendChild(rat);
+        }
+
+        // Simulate passage of time
+        setInterval(() => {
+            days++;
+            health = Math.max(0, health - 1);
+            daysCounter.textContent = days;
+            ratHealth.textContent = health + '%';
+        }, 5000);  // Every 5 seconds represents a day
+
+        document.getElementById('feed-btn').addEventListener('click', () => {
+            health = Math.min(100, health + 20);
+            ratHealth.textContent = health + '%';
+            infoPanel.textContent = 'Rats have been fed. Health improved!';
+        });
+
+        document.getElementById('observe-btn').addEventListener('click', () => {
+            const behaviors = ['active', 'lethargic', 'curious', 'sleeping'];
+            const observedBehavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+            infoPanel.textContent = `Observed rat behavior: ${observedBehavior}`;
+        });
+
+        document.getElementById('collect-sample-btn').addEventListener('click', () => {
+            if (health > 50) {
+                samples++;
+                samplesCollected.textContent = samples;
+                health -= 10;
+                ratHealth.textContent = health + '%';
+                infoPanel.textContent = 'Liver sample collected. Rat health slightly decreased.';
+            } else {
+                infoPanel.textContent = 'Rats are not healthy enough for sample collection.';
+            }
+        });
+
+        document.getElementById('analyze-btn').addEventListener('click', () => {
+            if (samples > 0) {
+                const genes = ['PPARγ', 'SREBP-1c', 'ACCα', 'SCD-1'];
+                const randomGene = genes[Math.floor(Math.random() * genes.length)];
+                const changePercent = Math.floor(Math.random() * 50) + 1;
+                const direction = Math.random() < 0.5 ? 'up-regulated' : 'down-regulated';
+                infoPanel.textContent = `Analysis complete. Gene ${randomGene} is ${direction} by ${changePercent}% in microgravity conditions.`;
+            } else {
+                infoPanel.textContent = 'No samples to analyze. Collect liver samples first.';
+            }
+        });
+    </script>
+</body>
+</html>

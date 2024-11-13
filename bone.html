@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page with Background Image and Paragraphs</title>
+    <style>
+        /* Set the background image */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-image: url('background.jpg'); /* Replace with your image URL */
+            background-size: cover; /* Cover the whole page */
+            background-position: center; /* Center the background image */
+            height: 100vh; /* Full viewport height */
+            color: white;
+        }
+
+        /* Optional: Add a background overlay to improve text visibility */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1; /* Ensures content appears above overlay */
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.6); /* Darken the text background for readability */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin: 0 0 20px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Style for the image */
+        .content img {
+            display: block;
+            margin: 0 auto 20px; /* Center the image and add bottom margin */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 10px; /* Optional: Rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div> <!-- Optional overlay for better text contrast -->
+    <div class="content">
+        <h1>NASA Bone Loss Research in Space</h1>
+        <img src="bone1.jpg" alt="NASA Bone Loss Research Image"> <!-- Replace with your image URL -->
+        
+        <p>
+           <b>Overview</b> 
+            NASA's bone loss research in space investigates how microgravity affects bone density and strength in astronauts. Understanding these changes is crucial for developing countermeasures to protect skeletal health during long-duration missions, such as those planned for Mars and beyond.
+        </p>
+        <p>
+            <b>Objectives</b> 
+            The primary objectives of bone loss research include studying the mechanisms of bone remodeling, which involves the balance between bone formation and resorption. Researchers aim to identify how microgravity disrupts this balance, leading to increased bone loss. Additionally, the research seeks to evaluate the effectiveness of various countermeasures, such as exercise and nutritional interventions, to mitigate bone density loss.
+        </p>
+        <p>
+            <b>Conclusion</b> 
+            NASA's bone loss research in space is essential for ensuring the health and safety of astronauts during long missions while advancing our understanding of bone biology. By investigating how microgravity affects bone density and strength, scientists are uncovering critical insights that can inform both space exploration and healthcare on Earth.
+        </p>
+    </div>
+</body>
+</html>

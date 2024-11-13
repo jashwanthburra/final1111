@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Space Biological Experiment: Plant Growth Simulation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100%;
+        }
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #lab-environment {
+            flex: 1;
+            background-image: url('/api/placeholder/1200/800');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #experiment-area {
+            width: 90%;
+            height: 90%;
+            background-color: rgba(50, 50, 50, 0.8);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .station {
+            width: 180px;
+            height: 280px;
+            background-color: rgba(100, 100, 100, 0.7);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .station-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .element {
+            width: 50px;
+            height: 50px;
+            background-color: #4a4a4a;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+        .element:hover {
+            transform: scale(1.1);
+        }
+        #plant-container {
+            width: 300px;
+            height: 400px;
+            background-color: #2a2a2a;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            overflow: hidden;
+            position: relative;
+        }
+        #plant {
+            width: 100px;
+            height: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: height 2s, width 2s;
+        }
+        #stem {
+            width: 10px;
+            height: 100%;
+            background-color: #4CAF50;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .leaf {
+            width: 30px;
+            height: 15px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 2s;
+        }
+        #control-panel {
+            height: 120px;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .status-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .status {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #temperature-control, #gravity-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="range"] {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="lab-environment">
+            <div id="experiment-area">
+                <div class="station">
+                    <div class="station-title">Nutrients</div>
+                    <div class="element" draggable="true" data-element="N">N</div>
+                    <div class="element" draggable="true" data-element="P">P</div>
+                    <div class="element" draggable="true" data-element="K">K</div>
+                </div>
+                <div class="station">
+                    <div class="station-title">Light</div>
+                    <div class="element" draggable="true" data-element="UV">UV</div>
+                    <div class="element" draggable="true" data-element="IR">IR</div>
+                    <div class="element" draggable="true" data-element="Visible">Visible</div>
+                </div>
+                <div class="station">
+                    <div class="station-title">Water</div>
+                    <div class="element" draggable="true" data-element="H2O">H2O</div>
+                </div>
+                <div id="plant-container">
+                    <div id="plant">
+                        <div id="stem"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="control-panel">
+            <div class="status-group">
+                <div class="status" id="growth-status">Plant height: 0%</div>
+                <div class="status" id="health-status">Plant health: Good</div>
+            </div>
+            <div id="temperature-control">
+                <label for="temperature">Temperature (°C):</label>
+                <input type="range" id="temperature" min="0" max="40" value="20">
+                <span id="temperature-value">20°C</span>
+            </div>
+            <div id="gravity-control">
+                <label for="gravity">Gravity (m/s²):</label>
+                <input type="range" id="gravity" min="0" max="10" step="0.1" value="9.8">
+                <span id="gravity-value">9.8 m/s²</span>
+            </div>
+            <button id="start-experiment">Start Experiment</button>
+        </div>
+    </div>
+
+    <script>
+        const elements = document.querySelectorAll('.element');
+        const plantContainer = document.getElementById('plant-container');
+        const plant = document.getElementById('plant');
+        const startButton = document.getElementById('start-experiment');
+        const growthStatus = document.getElementById('growth-status');
+        const healthStatus = document.getElementById('health-status');
+        const temperatureSlider = document.getElementById('temperature');
+        const temperatureValue = document.getElementById('temperature-value');
+        const gravitySlider = document.getElementById('gravity');
+        const gravityValue = document.getElementById('gravity-value');
+
+        let nutrients = 0;
+        let light = 0;
+        let water = 0;
+        let plantHeight = 0;
+        let temperature = 20;
+        let gravity = 9.8;
+
+        elements.forEach(element => {
+            element.addEventListener('dragstart', dragStart);
+        });
+
+        plantContainer.addEventListener('dragover', dragOver);
+        plantContainer.addEventListener('drop', drop);
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.element);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const element = e.dataTransfer.getData('text');
+            updateExperiment(element);
+        }
+
+        function updateExperiment(element) {
+            switch(element) {
+                case 'N':
+                case 'P':
+                case 'K':
+                    nutrients++;
+                    break;
+                case 'UV':
+                case 'IR':
+                case 'Visible':
+                    light++;
+                    break;
+                case 'H2O':
+                    water++;
+                    break;
+            }
+            checkExperimentStatus();
+        }
+
+        function checkExperimentStatus() {
+            if (nutrients >= 2 && light >= 2 && water >= 1) {
+                startButton.disabled = false;
+            }
+        }
+
+        temperatureSlider.addEventListener('input', (e) => {
+            temperature = parseInt(e.target.value);
+            temperatureValue.textContent = ${temperature}°C;
+        });
+
+        gravitySlider.addEventListener('input', (e) => {
+            gravity = parseFloat(e.target.value);
+            gravityValue.textContent = ${gravity.toFixed(1)} m/s²;
+        });
+
+        startButton.addEventListener('click', runExperiment);
+
+        function runExperiment() {
+            startButton.disabled = true;
+            let growth = setInterval(() => {
+                if (plantHeight < 100) {
+                    plantHeight += calculateGrowthRate();
+                    updatePlantVisuals();
+                    updateStatus();
+                } else {
+                    clearInterval(growth);
+                    growthStatus.textContent = 'Experiment complete!';
+                }
+            }, 1000);
+        }
+
+        function calculateGrowthRate() {
+            let rate = 1;
+            
+            // Temperature effect
+            if (temperature < 10 || temperature > 35) {
+                rate *= 0.5;
+            } else if (temperature >= 20 && temperature <= 30) {
+                rate *= 1.5;
+            }
+            
+            // Gravity effect
+            if (gravity < 3) {
+                rate *= 1.2; // Faster growth in low gravity
+            } else if (gravity > 15) {
+                rate *= 0.8; // Slower growth in high gravity
+            }
+            
+            return rate;
+        }
+
+        function updatePlantVisuals() {
+            plant.style.height = ${plantHeight * 3}px;
+            plant.style.width = ${50 + plantHeight}px;
+            
+            // Update stem
+            const stem = document.getElementById('stem');
+            stem.style.height = ${plantHeight * 3}px;
+            
+            // Add or update leaves
+            const leafCount = Math.floor(plantHeight / 20);
+            for (let i = 0; i < leafCount; i++) {
+                let leaf = document.getElementById(leaf-${i});
+                if (!leaf) {
+                    leaf = document.createElement('div');
+                    leaf.id = leaf-${i};
+                    leaf.className = 'leaf';
+                    plant.appendChild(leaf);
+                }
+                const side = i % 2 === 0 ? -1 : 1;
+                const angle = (i * 30 + 15) * side;
+                leaf.style.bottom = ${i * 60 + 20}px;
+                leaf.style.left = ${50 + side * 20}px;
+                leaf.style.transform = rotate(${angle}deg);
+            }
+        }
+
+        function updateStatus() {
+            growthStatus.textContent = Plant height: ${plantHeight.toFixed(1)}%;
+            
+            let health = 'Good';
+            if (temperature < 5 || temperature > 40 || gravity > 20) {
+                health = 'Poor';
+            } else if (temperature < 15 || temperature > 35 || gravity > 15) {
+                health = 'Fair';
+            }
+            healthStatus.textContent = Plant health: ${health};
+        }
+
+        // Add floating particles effect
+        const labEnvironment = document.getElementById('lab-environment');
+        for (let i = 0; i < 50; i++) {
+            createParticle();
+        }
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '5px';
+            particle.style.height = '5px';
+            particle.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animation = float ${Math.random() * 5 + 5}s linear infinite;
+            labEnvironment.appendChild(particle);
+        }
+
+        // Add keyframe animation for floating effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% { transform: translate(0, 0); }
+                50% { transform: translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px); }
+                100% { transform: translate(0, 0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

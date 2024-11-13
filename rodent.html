@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page with Background Image and Paragraphs</title>
+    <style>
+        /* Set the background image */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-image: url('background.jpg'); /* Replace with your image URL */
+            background-size: cover; /* Cover the whole page */
+            background-position: center; /* Center the background image */
+            height: 100vh; /* Full viewport height */
+            color: white;
+        }
+
+        /* Optional: Add a background overlay to improve text visibility */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1; /* Ensures content appears above overlay */
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.6); /* Darken the text background for readability */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin: 0 0 20px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Style for the image */
+        .content img {
+            display: block;
+            margin: 0 auto 20px; /* Center the image and add bottom margin */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 10px; /* Optional: Rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div> <!-- Optional overlay for better text contrast -->
+    <div class="content">
+        <h1>NASA Rodent Research in Space</h1>
+        <img src="rodent1.jpg" alt="Sodium Research Image"> <!-- Replace with your image URL -->
+
+        <p>
+          <b>Overview</b>
+          NASA's rodent research in space focuses on understanding the physiological and biological changes that occur in mammals during spaceflight. Rodents, particularly mice and rats, serve as valuable model organisms for studying human health, development, and disease processes, especially in the unique microgravity environment of space.
+        </p>
+        <p>
+            <b>Objectives</b>
+            The primary objectives of rodent research include investigating the effects of microgravity on bone density, muscle mass, immune function, and overall physiological health. Researchers aim to identify the mechanisms underlying these changes and develop countermeasures to mitigate potential health risks for astronauts on long-duration missions.        </p>
+        <p>
+            NASA's rodent research in space is essential for understanding the physiological impacts of microgravity on mammalian systems. By studying these changes, scientists are better equipped to protect astronaut health during space missions and enhance our knowledge of biological processes that have implications for both space exploration and medical research on Earth.        </p>
+    </div>
+</body>
+</html>

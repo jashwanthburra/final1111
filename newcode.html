@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Space-gen | Space Research Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --surface: #1a1a1a;
+            --surface-light: #2a2a2a;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #000000, #0a0a0a);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .dataset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gradient-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        }
+
+        .upload-btn {
+            background: #4f46e5;
+            transition: all 0.3s;
+            margin-top: -100px;
+            margin-left: -130px;
+        }
+
+        .upload-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        .carousel-section {
+            width: 80%;
+            text-align: center;
+            margin-top: 30px;
+           margin-left: 200px;
+        }
+
+        .carousel-section h2 {
+            color: #ffffff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            margin-left: -200px ;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            gap: 10px;
+        }
+
+        .slide {
+            flex: 0 0 20%;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+            transform: scale(0.8);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .slide.center {
+            opacity: 1;
+            transform: scale(1.2);
+            z-index: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .btn1 {
+            background: #4f46e5;
+            transition: all 0.3s;
+            margin-top: 60px;
+            margin-left: -115px;
+            border-radius:15px ;
+        }
+        .upload-btn1:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        .btn2 {
+            background: #4f46e5;
+            transition: all 0.3s;
+            margin-top: 30px;
+            margin-left: 400px;
+            border-radius:15px ;
+        }
+        .upload-btn2:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full glass z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="logo1.png" alt="Space-gen logo" class="h-8">
+            </div>
+            <div class="flex space-x-8">
+                <a href="#datasets" class="text-gray-300 hover:text-white">Datasets</a>
+                <a href="#simulation" class="text-gray-300 hover:text-white">Simulation</a>
+                <a href="https://claude.site/artifacts/63432bc1-108d-4691-ac8f-8f804dc107c5?fullscreen=true" class="text-gray-300 hover:text-white">Community</a>
+                <a href="#" class="text-gray-300 hover:text-white">Spacegen</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="p-2">
+                    <img src="profile.png" alt="notifications" class="h-6">
+                </button>
+                <button class="p-2">
+                    <img src="profile.png" alt="profile" class="h-6 rounded-full">
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 px-8 max-w-7xl mx-auto">
+        <!-- Hero Section -->
+        <section class="text-center mb-20">
+            <h1 class="text-4xl font-bold mb-6">Explore Space Research</h1>
+            <a href="https://hackthonnasakrishna-kupwacipzy6wvcvtk7ygyb.streamlit.app/"> <!-- Add the target URL here -->
+                <button class="upload-btn px-8 py-4 rounded-lg font-medium text-white shadow-lg mx-auto">
+                    UPLOAD DATA SET
+                </button>
+            </a>
+        </section>
+    
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+        <!-- Datasets Section -->
+<section id="datasets" class="mb-20">
+    <div class="flex justify-between items-center mb-8">
+        <select class="glass px-6 py-3 rounded-lg">
+            <option>Find DATASETS</option>
+            <option>Recent Uploads</option>
+            <option>Most Popular</option>
+        </select>
+    </div>
+
+    <div class="dataset-grid">
+        <!-- Europa Microbes -->
+        <a href="https://osdr.nasa.gov/bio/repo/search?q=&data_source=cgene,alsda&data_type=study" class="card">
+            <img src="678.jpg" alt="Europa Microbes" class="w-full h-48 object-cover">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2">OSD-678</h3>
+                <p class="text-gray-400 text-sm mb-3">Uploaded on October 15, 2023</p>
+                <p class="text-gray-300 mb-4">Light has a principal role in the Arabidopsis transcriptomic response to the spaceflight environment</p>
+            </div>
+        </a>
+
+        <!-- Martian Habitats -->
+        <a href="https://osdr.nasa.gov/bio/repo/search?q=&data_source=cgene,alsda&data_type=study" class="card">
+            <img src="758.jpg" alt="Martian Habitats" class="w-full h-48 object-cover">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2">OSD-758</h3>
+                <p class="text-gray-400 text-sm mb-3">Uploaded on October 8, 2023</p>
+                <p class="text-gray-300 mb-4">Artificial Gravity Attenuates the Transcriptomic Response to Spaceflight in the Optic Nerve and Retina -- Retina data</p>
+            </div>
+        </a>
+
+        <!-- Tardigrade Genetics -->
+        <a href="https://osdr.nasa.gov/bio/repo/search?q=&data_source=cgene,alsda&data_type=study" class="card">
+            <img src="783.jpg" alt="Tardigrade Genetics" class="w-full h-48 object-cover">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold mb-2">OSD-783</h3>
+                <p class="text-gray-400 text-sm mb-3">Uploaded on October 5, 2023</p>
+                <p class="text-gray-300 mb-4">Genetic analysis of tardigrades in extreme space conditions.</p>
+            </div>
+        </a>
+    </div>
+</section>
+
+        <!-- Simulations Section -->
+<section id="simulation" class="mb-20">
+    <h2 class="text-3xl font-bold mb-8">Simulations</h2>
+    <div class="simulation-grid">
+        <!-- Plant Growth -->
+        <a href="finalplant.html" class="card">
+            <div class="relative">
+                <img src="plant sim.jpg" alt="Plant Growth" class="w-full h-48 object-cover">
+                <div class="absolute inset-0 gradient-overlay"></div>
+                <div class="absolute bottom-4 left-4">
+                    <h3 class="text-lg font-semibold">Plant Growth</h3>
+                    <p class="text-sm text-gray-300">Plant growth stimulation</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- ratexperiment -->
+        <a href="ratexperiment.html" class="card">
+            <div class="relative">
+                <img src="rat sim.jpg" alt="rat" class="w-full h-48 object-cover">
+                <div class="absolute inset-0 gradient-overlay"></div>
+                <div class="absolute bottom-4 left-4">
+                    <h3 class="text-lg font-semibold">Rat experiment</h3>
+                    <p class="text-sm text-gray-300">Rat health stimulation</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Microbial Behavior -->
+        <a href="simulations3.html" class="card">
+            <div class="relative">
+                <img src="hed.jpg" alt="hedgehog" class="w-full h-48 object-cover">
+                <div class="absolute inset-0 gradient-overlay"></div>
+                <div class="absolute bottom-4 left-4">
+                    <h3 class="text-lg font-semibold">Hedgehog experiment</h3>
+                    <p class="text-sm text-gray-300">Hedgehog health stimulation</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Space Radiation -->
+        <a href="simulation4.html" class="card">
+            <div class="relative">
+                <img src="ferret.jpg" alt="Ferret" class="w-full h-48 object-cover">
+                <div class="absolute inset-0 gradient-overlay"></div>
+                <div class="absolute bottom-4 left-4">
+                    <h3 class="text-lg font-semibold">Ferret experiment</h3>
+                    <p class="text-sm text-gray-300">Ferret health stimulation</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</section>
+
+        
+<!-- Carousel Section -->
+<section class="carousel-section">
+    <h2>Recent and Ongoing Experiments</h2>
+    <div class="carousel-container">
+        <div class="carousel">
+            <a href="rodent.html" class="slide">
+                <div>
+                    <img src="nrat.jpg" alt="Rodent Research">
+                    <p class="text-gray-300 mt-2">Rodent Research</p>
+                </div>
+            </a>
+            <a href="bone.html" class="slide">
+                <div>
+                    <img src="nleg.jpg" alt="Bone Density Experiment">
+                    <p class="text-gray-300 mt-2">Bone Density </p>
+                </div>
+            </a>
+            <a href="cell.html" class="slide center">
+                <div>
+                    <img src="ncell.jpg" alt="Cell Growth">
+                    <p class="text-gray-300 mt-2">Cell Growth</p>
+                </div>
+            </a>
+            <a href="micro.html" class="slide">
+                <div>
+                    <img src="nmicro.jpg" alt="Microbial Study">
+                    <p class="text-gray-300 mt-2">Microbial Study</p>
+                </div>
+            </a>
+            <a href="https://gamma.app/docs/Spaceflights-Impact-on-Plant-Cell-Walls-An-Experiment-in-Orbit-jvieuseuezicjeq?mode=doc" class="slide">
+                <div>
+                    <img src="flight2.jpg" alt="Space Flight Impact">
+                    <p class="text-gray-300 mt-2">Space Flight Impact</p>
+                </div>
+            </a>
+        </div>
+        <button class="prev" onclick="prevSlide()">&#10094;</button>
+        <button class="next" onclick="nextSlide()">&#10095;</button>
+    </div>
+</section>
+<br>
+<br>
+<br>
+<br>
+<br>
+        <!-- AI Assistant Section -->
+        <section class="glass rounded-2xl p-12 text-center mb-20">
+            <h2 class="text-3xl font-bold mb-4">Explore Experiments</h2>
+            <p class="text-gray-300 mb-8">Ask our AI Voice Assistant anything about space experiments</p>
+            <button class="btn1">
+                Aira-Voice assistant
+            </button>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="glass rounded-2xl p-12 text-center mb-20">
+            <h3 class="text-2xl font-bold mb-6">Subscribe to our newsletter</h3>
+            <div class="flex justify-center gap-4">
+                <input type="email" placeholder="Input your email" 
+                       class="px-6 py-4 rounded-lg bg-gray-900 border border-gray-700">
+                <button class="btn2">Subscribe</button>
+            </div>
+        </section>
+    </main>
+    <script>
+        // JavaScript to handle the carousel sliding functionality
+        let currentIndex = 0; // Keeps track of the current slide
+
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Function to move the carousel to the previous slide
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+
+        // Function to move the carousel to the next slide
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateCarousel();
+        }
+
+        // Function to update the carousel based on the current slide index
+        function updateCarousel() {
+            const carousel = document.querySelector('.carousel');
+            const offset = -currentIndex * (slides[0].offsetWidth + 10); // Calculate the offset
+
+            carousel.style.transform = `translateX(${offset}px)`; // Apply the transformation to slide the carousel
+        }
+    </script>
+     
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-12 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="text-gray-400">
+                <img src="logo1.png" alt="Space-gen logo" class="h-8 mb-4">
+                <p>Advancing space research through collaborative data science.</p>
+            </div>
+            <!-- Footer links -->
+        </div>
+    </footer>
+</body>
+</html>

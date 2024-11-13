@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSD-702 Space Experiment Simulation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .ferret {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-4">
+
+    <div class="w-full max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-4">OSD-702 Space Experiment Simulation</h1>
+        <div class="flex mb-4">
+            <div class="w-3/4 relative">
+                <img src="https://via.placeholder.com/800x480" alt="ISS Interior" class="w-full h-auto rounded-lg">
+                <div class="absolute top-10 left-10 w-60 h-40 border-2 border-cyan-400 rounded-lg bg-black bg-opacity-20" id="ferret-container"></div>
+            </div>
+            <div class="w-1/4 pl-4">
+                <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                    <h3 class="font-bold mb-2">Experiment Data</h3>
+                    <p id="days">Days in space: 0</p>
+                    <p id="health">Ferret health: 100%</p>
+                    <p id="samples">Samples collected: 0</p>
+                </div>
+                <button onclick="handleFeed()" class="w-full bg-blue-600 text-white p-2 rounded mb-2">Feed Ferrets</button>
+                <button onclick="handleObserve()" class="w-full bg-green-600 text-white p-2 rounded mb-2">Observe Behavior</button>
+                <button onclick="handleCollectSample()" class="w-full bg-yellow-600 text-white p-2 rounded mb-2">Collect Blood Sample</button>
+                <button onclick="handleAnalyze()" class="w-full bg-purple-600 text-white p-2 rounded mb-2">Analyze Data</button>
+            </div>
+        </div>
+        <div class="bg-gray-800 p-4 rounded-lg flex items-start">
+            <svg class="w-6 h-6 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M11 11h2v5h-2zm0-4h2v2h-2z"/></svg>
+            <p id="info">Welcome to the OSD-702 Space Experiment Simulation. Start by feeding the ferrets.</p>
+        </div>
+    </div>
+
+    <script>
+        let days = 0;
+        let health = 100;
+        let samples = 0;
+
+        const infoElement = document.getElementById("info");
+        const daysElement = document.getElementById("days");
+        const healthElement = document.getElementById("health");
+        const samplesElement = document.getElementById("samples");
+        const ferretContainer = document.getElementById("ferret-container");
+
+        const positions = Array.from({ length: 3 }, () => ({
+            left: `${Math.random() * 210}px`,
+            top: `${Math.random() * 140}px`
+        }));
+
+        positions.forEach(position => {
+            const img = document.createElement("img");
+            img.src = "https://via.placeholder.com/40x30";
+            img.alt = "Ferret";
+            img.classList.add("ferret");
+            img.style.left = position.left;
+            img.style.top = position.top;
+            ferretContainer.appendChild(img);
+        });
+
+        setInterval(() => {
+            days++;
+            health = Math.max(0, health - 4);
+            daysElement.textContent = `Days in space: ${days}`;
+            healthElement.textContent = `Ferret health: ${health}%`;
+        }, 5000);
+
+        function handleFeed() {
+            health = Math.min(100, health + 55);
+            infoElement.textContent = "Ferrets have been fed. Health improved!";
+            healthElement.textContent = `Ferret health: ${health}%`;
+        }
+
+        function handleObserve() {
+            const behaviors = ["playing", "sleeping", "exploring", "foraging"];
+            const observedBehavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+            infoElement.textContent = `Observed ferret behavior: ${observedBehavior}`;
+        }
+
+        function handleCollectSample() {
+            if (health > 65) {
+                samples++;
+                health -= 22;
+                infoElement.textContent = "Blood sample collected. Ferret health decreased.";
+                samplesElement.textContent = `Samples collected: ${samples}`;
+                healthElement.textContent = `Ferret health: ${health}%`;
+            } else {
+                infoElement.textContent = "Ferrets are not healthy enough for sample collection.";
+            }
+        }
+
+        function handleAnalyze() {
+            if (samples > 0) {
+                const genes = ["IGF-1", "IGFBP-3", "GHR", "GHBP"];
+                const randomGene = genes[Math.floor(Math.random() * genes.length)];
+                const changePercent = Math.floor(Math.random() * 110) + 1;
+                const direction = Math.random() < 0.5 ? "up-regulated" : "down-regulated";
+                infoElement.textContent = `Analysis complete. Gene ${randomGene} is ${direction} by ${changePercent}% in microgravity conditions.`;
+            } else {
+                infoElement.textContent = "No samples to analyze. Collect blood samples first.";
+            }
+        }
+    </script>
+</body>
+</html>
